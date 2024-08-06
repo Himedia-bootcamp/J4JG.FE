@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+      "target": "esnext", // 최신 ECMAScript 버전을 타겟으로
+      "module": "esnext", // 최신 모듈 시스템 사용
+      "moduleResolution": "node",
+      "strict": true,
+      "jsx": "preserve", // Vue에서는 보통 JSX를 사용하지 않으므로 preserve로 설정
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "types": ["node", "swiper"] // node와 swiper 모듈의 타입을 인식
+    },
+    "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+    "exclude": ["node_modules"]
+  }
+  
