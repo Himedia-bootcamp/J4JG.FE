@@ -19,6 +19,7 @@
     "vue": "^3.4.35"
   },
   "devDependencies": {
+    "@types/aos": "^3.0.7",
     "@vitejs/plugin-vue": "^5.0.5",
     "vite": "^5.3.5"
   }
