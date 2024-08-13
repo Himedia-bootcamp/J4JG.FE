@@ -1,51 +1,185 @@
 <template>
-    <section id="services" class="services section">
-      <div class="container section-title" data-aos="fade-up">
-        <h2>Services</h2>
-        <p>
-          Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem. Sit sint consectetur
-          velit. Quisquam quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea. Quia fugiat sit in iste officiis
-          commodi quidem hic quas.
-        </p>
-      </div>
-  
-      <div class="container">
-        <div class="row gy-4">
-          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-            <div class="service-item item-cyan position-relative">
-              <div class="icon">
-                <svg width="100" height="100" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    stroke="none"
-                    stroke-width="0"
-                    fill="#f5f5f5"
-                    d="M300,521.0016835830174C376.1290562159157,517.8887921683347,466.0731472004068,529.7835943286574,510.70327084640275,468.03025145048787C554.3714126377745,407.6079735673963,508.03601936045806,328.9844924480964,491.2728898941984,256.3432110539036C474.5976632858925,184.082847569629,479.9380746630129,96.60480741107993,416.23090153303,58.64404602377083C348.86323505073057,18.502131276798302,261.93793281208167,40.57373210992963,193.5410806939664,78.93577620505333C130.42746243093433,114.334589627462,98.30271207620316,179.96522072025542,76.75703585869454,249.04625023123273C51.97151888228291,328.5150500222984,13.704378332031375,421.85034740162234,66.52175969318436,486.19268352777647C119.04800174914682,550.1803526380478,217.28368757567262,524.383925680826,300,521.0016835830174"
-                  ></path>
-                </svg>
-                <i class="bi bi-activity"></i>
-              </div>
-              <a href="#" class="stretched-link">
-                <h3>Nesciunt Mete</h3>
-              </a>
-              <p>
-                Provident nihil minus qui consequatur non omnis maiores. Eos accusantium minus dolores iure perferendis tempore
-                et consequatur.
-              </p>
+  <section id="services" class="services section">
+    <div class="container section-title" data-aos="fade-up">
+      <h2>Job Listings</h2>
+      <p>Here are some job opportunities you might be interested in.</p>
+    </div>
+
+    <div class="container">
+      <div class="row gy-4">
+        <div
+          v-for="job in jobs"
+          :key="job.id"
+          class="col-lg-4 col-md-6"
+          data-aos="fade-up"
+          data-aos-delay="100"
+        >
+          <div class="service-item item-cyan position-relative">
+            <!-- 스크랩 버튼 -->
+            <button
+              class="scrap-button"
+              @click.stop="scrapJob(job.id)"
+            >
+              <i
+                :class="[
+                  'bi',
+                  job.isScrapped ? 'bi-bookmark-fill' : 'bi-bookmark'
+                ]"
+                :style="{ color: job.isScrapped ? '#000' : '#333' }"
+              ></i>
+            </button>
+
+            <div class="icon">
+              <img
+                :src="job.companyImg"
+                alt="Company Logo"
+                style="width: 100px; height: 100px"
+              />
             </div>
+            <a href="#" class="stretched-link">
+              <h3>{{ job.companyName }}</h3>
+            </a>
+            <p><strong class="job-title">{{ job.position }}</strong></p>
+            <p>
+              <strong>위치:</strong> {{ job.location }}  {{ job.district ? ' ' + job.district : '' }}
+            </p>
+            <p><strong>Category:</strong> {{ categoryCodes[job.categoryCode] }}</p>
+            <p><strong>기술스택: </strong>
+              <span v-for="(skillId, index) in job.skillTag" :key="index">
+                {{ skillTags[skillId] || 'Unknown Skill' }}<span v-if="index < job.skillTag.length - 1">, </span>
+              </span>
+            </p>
+            <p><strong>경력:</strong> {{ job.annualFrom }} - {{ job.annualTo }} years</p>
           </div>
-          <!-- Repeat similar blocks for other service items -->
         </div>
       </div>
-    </section>
-  </template>
-  
-  <script setup lang="ts">
-  </script>
-  
-  <style scoped>
-  @import "@/../assets/vendor/aos/aos.css";
-  @import "@/../assets/vendor/glightbox/css/glightbox.min.css";
-  @import "@/../assets/vendor/swiper/swiper-bundle.min.css";
-  @import "@/../assets/css/main.css";
-  </style>
-  
+    </div>
+  </section>
+</template>
+
+<script>
+import { categoryCodes } from "@/data/categoryCodes.js";
+import { skillTags } from "@/data/skillTags.js";
+
+export default {
+  name: "Services",
+  data() {
+    return {
+      categoryCodes,
+      skillTags,
+      jobs: [
+        {
+          id: 228347,
+          companyId: 48734,
+          companyName: "와이피아이디어스컨설팅",
+          companyImg:
+            "https://static.wanted.co.kr/images/company/48734/nmrx6ne3hrzyhz9l__400_400.jpg",
+          companyAvgRate: "0.0",
+          companyLvl: "very_low",
+          location: "서울",
+          district: null,
+          position: "개발자 CTO 혹은 기술 총괄 팀장 (근무지: 말레이시아)",
+          categoryCode: 872,
+          attractionTags: [10433, 10426, 10468, 10437],
+          skillTag: [1554, 3078, 1698], // 예시 데이터
+          annualFrom: 5,
+          annualTo: 15,
+          newbie: false,
+          isScrapped: false,
+        },
+        {
+          id: 223111,
+          companyId: 5072,
+          companyName: "크로커스",
+          companyImg:
+            "https://static.wanted.co.kr/images/company/5072/tdubbanprxbumqth__400_400.png",
+          companyAvgRate: "0.0",
+          companyLvl: "very_low",
+          location: "서울",
+          district: "강남구",
+          position: "프론트엔드 개발 엔지니어 (React, Flutter)",
+          categoryCode: 873,
+          attractionTags: [10402, 10468, 10408, 10440, 10413, 10426],
+          skillTag: [1469, 1539, 1541],
+          annualFrom: 2,
+          annualTo: 5,
+          newbie: false,
+          isScrapped: false,
+        },
+        {
+          id: 174977,
+          companyId: 521,
+          companyName: "크래프톤(Krafton)",
+          companyImg:
+            "https://static.wanted.co.kr/images/company/521/27csffd2ls7lkpeo__400_400.jpg",
+          companyAvgRate: "0.0",
+          companyLvl: "very_low",
+          location: "서울",
+          district: "강남구",
+          position: "[Infra Div.] Publishing DevOps (3년 이상)",
+          categoryCode: 674,
+          attractionTags: [
+            10433, 10468, 10437, 10405, 10409, 10443, 10447, 10417, 10420,
+            10422, 10423, 10424, 10425, 10486, 10396, 10462, 10430,
+          ],
+          skillTag: [1698, 1459, 2217],
+          annualFrom: 3,
+          annualTo: 10,
+          newbie: false,
+          isScrapped: false,
+        },
+      ],
+    };
+  },
+  methods: {
+    scrapJob(jobId) {
+      const job = this.jobs.find((j) => j.id === jobId);
+      if (job) {
+        job.isScrapped = !job.isScrapped; // 스크랩 상태를 토글합니다.
+        console.log(
+          `Job ${jobId} has been ${job.isScrapped ? "scrapped" : "unscrapped"}!`
+        );
+      }
+    },
+  },
+};
+</script>
+
+<style scoped>
+
+.job-title {
+  font-size: 1.3em; /* 글자 크기를 키웁니다 */
+  font-weight: bold; /* 텍스트를 굵게 표시합니다 */
+  margin-bottom: 10px; /* 아래 여백을 추가합니다 */
+}
+
+.job-title {
+  font-size: 1.3em;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.scrap-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  cursor: pointer;
+  transition: color 0.3s;
+  z-index: 10;
+}
+
+.scrap-button:hover {
+  color: #007BFF;
+}
+
+.service-item {
+  position: relative;
+  padding: 20px;
+  border-radius: 8px;
+  background: #f5f5f5;
+}
+
+</style>
