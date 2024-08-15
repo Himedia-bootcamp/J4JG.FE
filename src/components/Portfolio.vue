@@ -6,15 +6,28 @@
     </div>
 
     <div class="container text-center">
-      <button class="btn-mentoring" @click="joinMentoring">멘토링 참여</button>
+      <button v-if="role === 'mentee'" class="btn-mentoring" @click="joinMentoring">멘토링 참여</button>
+      <button v-else-if="role === 'mentor'" class="btn-mentoring" @click="createMentoringRoom">멘토링 방 생성</button>
+      <button v-else-if="role === 'admin'" class="btn-mentoring" @click="manageMentoring">멘토링 매칭</button>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
+
+const role = 'mentee'; // 'mentee', 'mentor', 'admin'
+
 function joinMentoring() {
-  alert("멘토링에 참여하셨습니다!"); // 클릭 시 메시지를 표시합니다.
+  alert("멘토링에 참여하셨습니다!");
 }
+
+function createMentoringRoom() {
+  alert("멘토링 방 생성하는 버튼");
+}
+
+function manageMentoring() {
+  alert("멘토링 매칭 관리 페이지로 이동"); 
+  }
 </script>
 
 <style scoped>
