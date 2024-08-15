@@ -16,7 +16,8 @@
     "bootstrap": "^5.3.3",
     "express": "^4.19.2",
     "swiper": "^11.1.9",
-    "vue": "^3.4.35"
+    "vue": "^3.4.35",
+    "vue-router": "^4.4.3"
   },
   "devDependencies": {
     "@types/aos": "^3.0.7",
