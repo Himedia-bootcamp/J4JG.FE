@@ -8,7 +8,7 @@
     <div class="container">
       <div class="row gy-4">
         <div
-          v-for="job in jobs"
+          v-for="job in paginatedJobs"
           :key="job.id"
           class="col-lg-4 col-md-6"
           data-aos="fade-up"
@@ -53,6 +53,17 @@
           </div>
         </div>
       </div>
+
+      <div class="pagination">
+        <button
+          v-for="page in totalPages"
+          :key="page"
+          @click="currentPage = page"
+          :class="{ active: currentPage === page }"
+        >
+          {{ page }}
+        </button>
+      </div>
     </div>
   </section>
 </template>
@@ -81,7 +92,7 @@ export default {
           position: "개발자 CTO 혹은 기술 총괄 팀장 (근무지: 말레이시아)",
           categoryCode: 872,
           attractionTags: [10433, 10426, 10468, 10437],
-          skillTag: [1554, 3078, 1698], // 예시 데이터
+          skillTag: [1554, 3078, 1698],
           annualFrom: 5,
           annualTo: 15,
           newbie: false,
@@ -128,14 +139,27 @@ export default {
           newbie: false,
           isScrapped: false,
         },
+        
       ],
+      currentPage: 1,
+      itemsPerPage: 15,
     };
+  },
+  computed: {
+    paginatedJobs() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.jobs.slice(start, end);
+    },
+    totalPages() {
+      return Math.ceil(this.jobs.length / this.itemsPerPage);
+    },
   },
   methods: {
     scrapJob(jobId) {
       const job = this.jobs.find((j) => j.id === jobId);
       if (job) {
-        job.isScrapped = !job.isScrapped; // 스크랩 상태를 토글합니다.
+        job.isScrapped = !job.isScrapped;
         console.log(
           `Job ${jobId} has been ${job.isScrapped ? "scrapped" : "unscrapped"}!`
         );
@@ -146,13 +170,6 @@ export default {
 </script>
 
 <style scoped>
-
-.job-title {
-  font-size: 1.3em; /* 글자 크기를 키웁니다 */
-  font-weight: bold; /* 텍스트를 굵게 표시합니다 */
-  margin-bottom: 10px; /* 아래 여백을 추가합니다 */
-}
-
 .job-title {
   font-size: 1.3em;
   font-weight: bold;
@@ -182,4 +199,28 @@ export default {
   background: #f5f5f5;
 }
 
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.pagination button.active {
+  background-color: #0056b3;
+}
+
+.pagination button:hover {
+  background-color: #0056b3;
+}
 </style>

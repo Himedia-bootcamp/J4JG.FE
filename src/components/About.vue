@@ -1,59 +1,58 @@
 <template>
-    <section id="about" class="about section">
-      <div class="container section-title" data-aos="fade-up">
-        <h2>About</h2>
-        <p>
-          Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem. Sit sint consectetur
-          velit. Quisquam quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea. Quia fugiat sit in iste officiis
-          commodi quidem hic quas.
-        </p>
-      </div>
-  
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
-        <div class="row gy-4 justify-content-center">
-          <div class="col-lg-4">
-            <img src="" class="img-fluid" alt="" />
-          </div>
-          <div class="col-lg-8 content">
-            <h2>UI/UX Designer &amp; Web Developer.</h2>
-            <p class="fst-italic py-3">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-              magna aliqua.
-            </p>
-            <div class="row">
-              <div class="col-lg-6">
-                <ul>
-                  <li><i class="bi bi-chevron-right"></i> <strong>Birthday:</strong> <span>1 May 1995</span></li>
-                  <li><i class="bi bi-chevron-right"></i> <strong>Website:</strong> <span>www.example.com</span></li>
-                  <li><i class="bi bi-chevron-right"></i> <strong>Phone:</strong> <span>+123 456 7890</span></li>
-                  <li><i class="bi bi-chevron-right"></i> <strong>City:</strong> <span>New York, USA</span></li>
-                </ul>
-              </div>
-              <div class="col-lg-6">
-                <ul>
-                  <li><i class="bi bi-chevron-right"></i> <strong>Age:</strong> <span>30</span></li>
-                  <li><i class="bi bi-chevron-right"></i> <strong>Degree:</strong> <span>Master</span></li>
-                  <li><i class="bi bi-chevron-right"></i> <strong>Email:</strong> <span>email@example.com</span></li>
-                  <li><i class="bi bi-chevron-right"></i> <strong>Freelance:</strong> <span>Available</span></li>
-                </ul>
-              </div>
+  <section id="about" class="about section">
+    <div class="container section-title" data-aos="fade-up">
+      <h2>My Page</h2>
+      <p>
+        유저 프로필 이미지는 혹시나 해서.. 일단 기본 이미지로 넣는것도 괜찮
+      </p>
+    </div>
+
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <div class="row gy-4 justify-content-center">
+        <div class="col-lg-4">
+          <img src="" class="img-fluid" alt="Profile Picture" />
+        </div>
+        <div class="col-lg-8 content">
+          <h2>User Information</h2>
+          <p class="fst-italic py-3">
+            유저 기본 정보가 들어갈 자리 아래
+          </p>
+          <div class="row">
+            <div class="col-lg-6">
+              <ul>
+                <li><i class="bi bi-chevron-right"></i> <strong>Nickname:</strong> <span>{{ userNickname }}</span></li>
+                <li><i class="bi bi-chevron-right"></i> <strong>Name:</strong> <span>{{ userName }}</span></li>
+                <li><i class="bi bi-chevron-right"></i> <strong>Email:</strong> <span>{{ userEmail }}</span></li>
+                <li><i class="bi bi-chevron-right"></i> <strong>Provider:</strong> <span>{{ provider }}</span></li>
+              </ul>
             </div>
-            <p class="py-3">
-              Officiis eligendi itaque labore et dolorum mollitia officiis optio vero. Quisquam sunt adipisci omnis et ut.
-              Nulla accusantium dolor incidunt officia tempore. Et eius omnis. Cupiditate ut dicta maxime officiis quidem quia.
-              Sed et consectetur qui quia repellendus itaque neque.
-            </p>
+            <div class="col-lg-6">
+              <ul>
+                <li><i class="bi bi-chevron-right"></i> <strong>Phone Number:</strong> <span>{{ userPhoneNumber }}</span></li>
+                <li><i class="bi bi-chevron-right"></i> <strong>Role:</strong> <span>{{ role }}</span></li>
+              </ul>
+            </div>
           </div>
+          <p class="py-3">
+            여기서 아래에 스크랩 리스트나 이런걸 추가하는게 좋겠죠?
+          </p>
         </div>
       </div>
-    </section>
-  </template>
-  
-  <script setup lang="ts">
-  </script>
-  
-  <style scoped>
-  @import "@/../assets/vendor/aos/aos.css";
-  @import "@/../assets/css/main.css";
-  </style>
-  
+    </div>
+  </section>
+</template>
+
+<script setup lang="ts">
+
+const userNickname = '';  
+const userName = '';      
+const userEmail = '';     
+const provider = '';      
+const userPhoneNumber = ''; 
+const role = '';          // 백엔드랑 연동ㄷ할 스크립트 생성 필요
+</script>
+
+<style scoped>
+@import "@/../assets/vendor/aos/aos.css";
+@import "@/../assets/css/main.css";
+</style>
