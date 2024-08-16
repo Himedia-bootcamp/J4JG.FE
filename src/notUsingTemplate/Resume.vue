@@ -82,7 +82,7 @@
   </script>
   
   <style scoped>
-  @import "@/../assets/vendor/aos/aos.css";
-  @import "@/../assets/css/main.css";
+  @import "../../assets/vendor";
+  @import "../../assets";
   </style>
   

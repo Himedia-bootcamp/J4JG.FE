@@ -22,11 +22,11 @@ function joinMentoring() {
 }
 
 function createMentoringRoom() {
-  alert("멘토링 방 생성하는 버튼");
+  alert("멘토링 방 생성하는 버튼"); // 팝업으로 형식 띄울까..
 }
 
 function manageMentoring() {
-  alert("멘토링 매칭 관리 페이지로 이동"); 
+  alert("멘토링 매칭 관리 페이지로 이동"); // 마이페이지 자체를 없애고 버튼도 없애고 그냥 멘토링 리스트만 뿌려줄까.. 채용정보X, 마이페이지X
   }
 </script>
 

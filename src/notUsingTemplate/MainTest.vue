@@ -358,7 +358,7 @@
                       class="glightbox preview-link"
                       ><i class="bi bi-zoom-in"></i
                     ></a>
-                    <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
+                    <a href="../../portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
                   </div>
                 </div>
                 <!-- End Portfolio Item -->
@@ -375,7 +375,7 @@
                       class="glightbox preview-link"
                       ><i class="bi bi-zoom-in"></i
                     ></a>
-                    <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
+                    <a href="../../portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
                   </div>
                 </div>
                 <!-- End Portfolio Item -->
@@ -392,7 +392,7 @@
                       class="glightbox preview-link"
                       ><i class="bi bi-zoom-in"></i
                     ></a>
-                    <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
+                    <a href="../../portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
                   </div>
                 </div>
                 <!-- End Portfolio Item -->
@@ -409,7 +409,7 @@
                       class="glightbox preview-link"
                       ><i class="bi bi-zoom-in"></i
                     ></a>
-                    <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
+                    <a href="../../portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
                   </div>
                 </div>
                 <!-- End Portfolio Item -->
@@ -426,7 +426,7 @@
                       class="glightbox preview-link"
                       ><i class="bi bi-zoom-in"></i
                     ></a>
-                    <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
+                    <a href="../../portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
                   </div>
                 </div>
                 <!-- End Portfolio Item -->
@@ -443,7 +443,7 @@
                       class="glightbox preview-link"
                       ><i class="bi bi-zoom-in"></i
                     ></a>
-                    <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
+                    <a href="../../portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
                   </div>
                 </div>
                 <!-- End Portfolio Item -->
@@ -460,7 +460,7 @@
                       class="glightbox preview-link"
                       ><i class="bi bi-zoom-in"></i
                     ></a>
-                    <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
+                    <a href="../../portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
                   </div>
                 </div>
                 <!-- End Portfolio Item -->
@@ -477,7 +477,7 @@
                       class="glightbox preview-link"
                       ><i class="bi bi-zoom-in"></i
                     ></a>
-                    <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
+                    <a href="../../portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
                   </div>
                 </div>
                 <!-- End Portfolio Item -->
@@ -494,7 +494,7 @@
                       class="glightbox preview-link"
                       ><i class="bi bi-zoom-in"></i
                     ></a>
-                    <a href="portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
+                    <a href="../../portfolio-details.html" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
                   </div>
                 </div>
                 <!-- End Portfolio Item -->
@@ -832,7 +832,7 @@
               </div>
   
               <div class="col-lg-8">
-                <form action="forms/contact.php" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="200">
+                <form action="../../forms/contact.php" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="200">
                   <div class="row gy-4">
                     <div class="col-md-6">
                       <input type="text" name="name" class="form-control" placeholder="Your Name" required />
@@ -930,12 +930,12 @@ onMounted(() => {
   
   <style>
   /* 필요한 스타일을 여기에 추가하거나 외부 스타일시트를 사용합니다. */
-  @import "@/../assets/vendor/bootstrap/css/bootstrap.min.css";
-@import "@/../assets/vendor/bootstrap-icons/bootstrap-icons.css";
-@import "@/../assets/vendor/aos/aos.css";
-@import "@/../assets/vendor/glightbox/css/glightbox.min.css";
-@import "@/../assets/vendor/swiper/swiper-bundle.min.css";
-@import "@/../assets/css/main.css";
+  @import "../../assets/vendor/bootstrap";
+@import "../../assets/vendor";
+@import "../../assets/vendor";
+@import "../../assets/vendor/glightbox";
+@import "../../assets/vendor";
+@import "../../assets";
 
   </style>
   
