@@ -46,7 +46,7 @@
                   :id="'room-' + index" 
                   :value="room" 
                   v-model="selectedRoom" 
-                  :disabled="selectedRoom && selectedRoom !== room"
+                  @change="onRoomChange"
                 >
                 <label :for="'room-' + index">{{ room.name }}</label>
               </li>
@@ -107,6 +107,11 @@ function openAdminPopup() {
 function closeAdminPopup() {
   showAdminPopup.value = false;
   selectedRoom.value = null;
+  selectedMentees.value = [];
+}
+
+function onRoomChange() {
+  // Reset mentees selection when the room changes
   selectedMentees.value = [];
 }
 
