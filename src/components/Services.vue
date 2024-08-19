@@ -8,7 +8,8 @@
     <div class="container">
       <div class="row gy-4">
         <div
-          v-for="job in paginatedJobs"
+          v-if="jobs.length > 0"
+          v-for="job in jobs"
           :key="job.id"
           class="col-lg-4 col-md-6"
           data-aos="fade-up"
@@ -41,10 +42,10 @@
             </a>
             <p><strong class="job-title">{{ job.position }}</strong></p>
             <p>
-              <strong>위치:</strong> {{ job.location }}  {{ job.district ? ' ' + job.district : '' }}
+              <strong>위치:</strong> {{ job.location }} <span v-if="job.district && job.district !== 'null'">{{ job.district }}</span>
             </p>
-            <p><strong>Category:</strong> {{ categoryCodes[job.categoryCode] }}</p>
-            <p><strong>기술스택: </strong>
+            <p><strong>Category:</strong> {{ categoryCodes[job.categoryCode] || 'Unknown Category' }}</p>
+            <p><strong>기술 스택: </strong>
               <span v-for="(skillId, index) in job.skillTag" :key="index">
                 {{ skillTags[skillId] || 'Unknown Skill' }}<span v-if="index < job.skillTag.length - 1">, </span>
               </span>
@@ -52,16 +53,31 @@
             <p><strong>경력:</strong> {{ job.annualFrom }} - {{ job.annualTo }} years</p>
           </div>
         </div>
+        <div v-else class="col-12">
+          <p class="text-center">해당 페이지에 정보가 없습니다.</p>
+        </div>
       </div>
 
       <div class="pagination">
         <button
-          v-for="page in totalPages"
-          :key="page"
-          @click="currentPage = page"
-          :class="{ active: currentPage === page }"
+          @click="prevPageGroup"
+          :disabled="!currentPageGroup || currentPageGroup.start === 1"
         >
-          {{ page }}
+          &laquo;
+        </button>
+        <button
+          v-for="page in currentPageGroupEnd"
+          :key="page"
+          @click="setPage(currentPageGroup.start + page - 1)"
+          :class="{ active: currentPage === currentPageGroup.start + page - 1 }"
+        >
+          {{ currentPageGroup.start + page - 1 }}
+        </button>
+        <button
+          @click="nextPageGroup"
+          :disabled="!currentPageGroup || !hasMorePages"
+        >
+          &raquo;
         </button>
       </div>
     </div>
@@ -76,11 +92,16 @@
         </div>
         <div class="modal-body">
           <p><strong>Position:</strong> {{ selectedJob.position }}</p>
-          <p><strong>Location:</strong> {{ selectedJob.location }} {{ selectedJob.district }}</p>
-          <p><strong>Category:</strong> {{ categoryCodes[selectedJob.categoryCode] }}</p>
+          <p><strong>Location:</strong> {{ selectedJob.location }} <span v-if="selectedJob.district && selectedJob.district !== 'null'">{{ selectedJob.district }}</span></p>
+          <p><strong>Category:</strong> {{ categoryCodes[selectedJob.categoryCode] || 'Unknown Category' }}</p>
           <p><strong>Skill Tags:</strong>
             <span v-for="(skillId, index) in selectedJob.skillTag" :key="index">
               {{ skillTags[skillId] || 'Unknown Skill' }}<span v-if="index < selectedJob.skillTag.length - 1">, </span>
+            </span>
+          </p>
+          <p><strong>Attraction Tags:</strong>
+            <span v-for="(tagId, index) in selectedJob.attractionTags" :key="index">
+              {{ skillTags[tagId] || 'Unknown Tag' }}<span v-if="index < selectedJob.attractionTags.length - 1">, </span>
             </span>
           </p>
           <p><strong>Experience:</strong> {{ selectedJob.annualFrom }} - {{ selectedJob.annualTo }} years</p>
@@ -104,6 +125,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import { categoryCodes } from "@/data/categoryCodes.js";
 import { skillTags } from "@/data/skillTags.js";
 
@@ -113,86 +135,58 @@ export default {
     return {
       categoryCodes,
       skillTags,
-      jobs: [
-        {
-          id: 228347,
-          companyId: 48734,
-          companyName: "YP Ideas Consulting",
-          companyImg:
-            "https://static.wanted.co.kr/images/company/48734/nmrx6ne3hrzyhz9l__400_400.jpg",
-          companyAvgRate: "0.0",
-          companyLvl: "very_low",
-          location: "Seoul",
-          district: null,
-          position: "CTO or Technical Lead (Location: Malaysia)",
-          categoryCode: 872,
-          attractionTags: [10433, 10426, 10468, 10437],
-          skillTag: [1554, 3078, 1698],
-          annualFrom: 5,
-          annualTo: 15,
-          newbie: false,
-          isScrapped: false,
-        },
-        {
-          id: 223111,
-          companyId: 5072,
-          companyName: "Crocus",
-          companyImg:
-            "https://static.wanted.co.kr/images/company/5072/tdubbanprxbumqth__400_400.png",
-          companyAvgRate: "0.0",
-          companyLvl: "very_low",
-          location: "Seoul",
-          district: "Gangnam-gu",
-          position: "Frontend Developer (React, Flutter)",
-          categoryCode: 873,
-          attractionTags: [10402, 10468, 10408, 10440, 10413, 10426],
-          skillTag: [1469, 1539, 1541],
-          annualFrom: 2,
-          annualTo: 5,
-          newbie: false,
-          isScrapped: false,
-        },
-        {
-          id: 174977,
-          companyId: 521,
-          companyName: "Krafton",
-          companyImg:
-            "https://static.wanted.co.kr/images/company/521/27csffd2ls7lkpeo__400_400.jpg",
-          companyAvgRate: "0.0",
-          companyLvl: "very_low",
-          location: "Seoul",
-          district: "Gangnam-gu",
-          position: "[Infra Div.] Publishing DevOps (3+ years)",
-          categoryCode: 674,
-          attractionTags: [
-            10433, 10468, 10437, 10405, 10409, 10443, 10447, 10417, 10420,
-            10422, 10423, 10424, 10425, 10486, 10396, 10462, 10430,
-          ],
-          skillTag: [1698, 1459, 2217],
-          annualFrom: 3,
-          annualTo: 10,
-          newbie: false,
-          isScrapped: false,
-        },
-        // Add more jobs here as needed
-      ],
-      currentPage: 1,
+      jobs: [],
+      currentPage: 0, // 페이지는 0부터 시작
       itemsPerPage: 15,
-      selectedJob: null, // 모달에 표시할 선택된 job
-      relatedNews: [],   // 관련 뉴스 목록
+      selectedJob: null,
+      relatedNews: [],
+      keyword: "",
+      hasMorePages: true, // 더 많은 페이지가 있는지 여부
     };
   },
   computed: {
-    paginatedJobs() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      const end = start + this.itemsPerPage;
-      return this.jobs.slice(start, end);
-    },
     totalPages() {
-      return Math.ceil(this.jobs.length / this.itemsPerPage);
+      return Math.ceil((this.currentPage + 1) * this.itemsPerPage / this.itemsPerPage);
+    },
+    currentPageGroup() {
+      const start = Math.floor(this.currentPage / 10) * 10;
+      const end = start + 9;
+      return { start, end };
+    },
+    currentPageGroupEnd() {
+      return this.currentPageGroup.end - this.currentPageGroup.start + 1;
     },
   },
   methods: {
+    async fetchJobs() {
+      try {
+        console.log("Fetching jobs with keyword:", this.keyword, "at page:", this.currentPage);
+        const response = await axios.get(`http://localhost:8000/backend/jobInfo/search?keyword=${this.keyword}&page=${this.currentPage}`);
+        const fetchedJobs = response.data;
+
+        if (fetchedJobs.length < this.itemsPerPage) {
+          this.hasMorePages = false; // 마지막 페이지일 경우
+        } else {
+          this.hasMorePages = true;
+        }
+
+        if (fetchedJobs.length > 0) {
+          this.jobs = fetchedJobs;
+        } else {
+          this.jobs = [];
+        }
+
+        console.log("Jobs fetched successfully:", fetchedJobs);
+      } catch (error) {
+        if (error.response) {
+          console.error("Failed to fetch jobs - Response error:", error.response.data);
+        } else if (error.request) {
+          console.error("Failed to fetch jobs - No response received:", error.request);
+        } else {
+          console.error("Failed to fetch jobs - Error setting up request:", error.message);
+        }
+      }
+    },
     scrapJob(jobId) {
       const job = this.jobs.find((j) => j.id === jobId);
       if (job) {
@@ -218,11 +212,27 @@ export default {
     fetchRelatedNews(companyId) {
       // 실제 API 호출을 통한 뉴스 데이터 가져오기 로직 추가 필요
       this.relatedNews = [
-        // 여기에 실제 데이터가 추가되어야 함
         { title: "News 1", url: "https://news.example.com/1" },
         { title: "News 2", url: "https://news.example.com/2" },
       ];
     },
+    setPage(page) {
+      this.currentPage = page;
+      this.fetchJobs(); // 페이지를 변경할 때마다 데이터를 다시 가져옴
+    },
+    prevPageGroup() {
+      if (this.currentPageGroup && this.currentPageGroup.start > 0) {
+        this.setPage(this.currentPageGroup.start - 1);
+      }
+    },
+    nextPageGroup() {
+      if (this.hasMorePages) {
+        this.setPage(this.currentPageGroup.end + 1);
+      }
+    },
+  },
+  mounted() {
+    this.fetchJobs(); // 컴포넌트가 마운트되면 채용 정보를 가져옴
   },
 };
 </script>
@@ -255,6 +265,23 @@ export default {
   padding: 20px;
   border-radius: 8px;
   background: #f5f5f5;
+  height: 100%; /* 아이템 높이를 통일 */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.icon img {
+  margin-bottom: 10px; /* 로고와 텍스트 사이의 간격 조정 */
+  align-self: center; /* 이미지를 가운데 정렬 */
+}
+
+/* 5개씩 한 줄에 배치 */
+@media (min-width: 992px) {
+  .col-lg-4 {
+    flex: 0 0 auto;
+    width: 20%; /* 5개씩 한 줄에 배치 */
+  }
 }
 
 .pagination {
@@ -280,6 +307,11 @@ export default {
 
 .pagination button:hover {
   background-color: #0056b3;
+}
+
+.pagination button:disabled {
+  background-color: #c0c0c0;
+  cursor: not-allowed;
 }
 
 .modal-overlay {

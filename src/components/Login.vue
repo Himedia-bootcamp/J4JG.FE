@@ -25,31 +25,74 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
 const router = useRouter();
 
+// 사용자 정보 가져오는 함수
+async function fetchUserInfo() {
+  try {
+    // 쿠키에서 accessToken을 가져옵니다.
+    const accessToken = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('accessToken='))
+      ?.split('=')[1];
+
+    if (!accessToken) {
+      console.error('accessToken이 없습니다. 로그인해주세요.');
+      return;
+    }
+
+    console.log('사용 중인 accessToken:', accessToken); // 토큰 로그 확인
+
+    // Authorization 헤더에 토큰을 추가하여 요청을 보냅니다.
+    const response = await axios.get('http://localhost:8000/userinfo', {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
+      withCredentials: true, // 쿠키를 포함해서 요청
+    });
+
+    console.log('사용자 정보:', response.data);
+    sessionStorage.setItem('userInfo', JSON.stringify(response.data)); // 필요 시 세션에 저장
+    router.push('/');  // 메인 페이지로 이동
+  } catch (error) {
+    if (error.response && error.response.status === 401) {
+      // 인증 오류가 발생한 경우 (예: 토큰 만료 등)
+      console.error('로그인이 필요합니다.');
+    } else {
+      console.error('사용자 정보를 가져오는 중 오류 발생:', error);
+    }
+    // 인증 오류 처리: 로그인 페이지로 리디렉션 또는 경고 메시지 표시
+    router.push('/login');
+  }
+}
+
+// 로그인 처리 함수들
+const loginWithKakao = () => {
+  window.location.href = 'http://localhost:8000/oauth2/authorization/kakao';
+};
+
+const loginWithNaver = () => {
+  alert('네이버 로그인을 지원하지 않습니다.');
+};
+
+const loginWithGoogle = () => {
+  window.location.href = 'http://localhost:8000/oauth2/authorization/google';
+};
+
+// onMounted는 컴포넌트가 마운트될 때 사용자 정보를 가져옵니다.
 onMounted(() => {
   AOS.init({
     duration: 1000,
     once: true,
   });
+
+  // 사용자 정보 요청 (쿠키는 자동으로 전송됨)
+  fetchUserInfo();
 });
-
-const loginWithKakao = () => {
-  window.location.href = "http://localhost:8000/oauth2/authorization/kakao";
-  router.push('/');
-};
-
-const loginWithNaver = () => {
-  alert("네이버 로그인이 현재 구현되지 않았습니다. 다른 로그인 방법을 사용해 주세요.");
-};
-
-const loginWithGoogle = () => {
-  window.location.href = "http://localhost:8000/oauth2/authorization/google";
-  router.push('/');
-};
 </script>
 
 <style scoped>
