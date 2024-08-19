@@ -43,8 +43,7 @@ const loginWithKakao = () => {
 };
 
 const loginWithNaver = () => {
-  window.location.href = "https://nid.naver.com/oauth2.0/authorize?...";
-  router.push('/');
+  alert("네이버 로그인이 현재 구현되지 않았습니다. 다른 로그인 방법을 사용해 주세요.");
 };
 
 const loginWithGoogle = () => {
