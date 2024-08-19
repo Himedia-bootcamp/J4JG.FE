@@ -47,13 +47,19 @@ async function fetchUserInfo() {
 
     console.log('사용 중인 accessToken:', accessToken); // 토큰 로그 확인
 
+
+    
     // Authorization 헤더에 토큰을 추가하여 요청을 보냅니다.
     const response = await axios.get('http://localhost:8000/userinfo', {
       headers: {
         'Authorization': `Bearer ${accessToken}`,
       },
       withCredentials: true, // 쿠키를 포함해서 요청
+
     });
+
+
+    console.log('response.headers: ', response.headers)
 
     console.log('사용자 정보:', response.data);
     sessionStorage.setItem('userInfo', JSON.stringify(response.data)); // 필요 시 세션에 저장
@@ -63,6 +69,7 @@ async function fetchUserInfo() {
       // 인증 오류가 발생한 경우 (예: 토큰 만료 등)
       console.error('로그인이 필요합니다.');
     } else {
+      
       console.error('사용자 정보를 가져오는 중 오류 발생:', error);
     }
     // 인증 오류 처리: 로그인 페이지로 리디렉션 또는 경고 메시지 표시
