@@ -38,7 +38,7 @@ onMounted(() => {
 });
 
 const loginWithKakao = () => {
-  window.location.href = "https://kauth.kakao.com/oauth/authorize?...";
+  window.location.href = "http://localhost:8000/oauth2/authorization/kakao";
   router.push('/');
 };
 
@@ -48,7 +48,7 @@ const loginWithNaver = () => {
 };
 
 const loginWithGoogle = () => {
-  window.location.href = "https://accounts.google.com/o/oauth2/auth?...";
+  window.location.href = "http://localhost:8000/oauth2/authorization/google";
   router.push('/');
 };
 </script>

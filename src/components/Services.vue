@@ -36,7 +36,7 @@
                 style="width: 100px; height: 100px"
               />
             </div>
-            <a href="#" class="stretched-link">
+            <a href="#" class="stretched-link" @click.prevent="openModal(job)">
               <h3>{{ job.companyName }}</h3>
             </a>
             <p><strong class="job-title">{{ job.position }}</strong></p>
@@ -65,6 +65,41 @@
         </button>
       </div>
     </div>
+
+    <!-- Modal -->
+    <div v-if="selectedJob" class="modal-overlay" @click="closeModal">
+      <div class="modal-content" @click.stop>
+        <span class="close-button" @click="closeModal">&times;</span>
+        <div class="modal-header">
+          <h3>{{ selectedJob.companyName }}</h3>
+          <img :src="selectedJob.companyImg" alt="Company Logo" />
+        </div>
+        <div class="modal-body">
+          <p><strong>Position:</strong> {{ selectedJob.position }}</p>
+          <p><strong>Location:</strong> {{ selectedJob.location }} {{ selectedJob.district }}</p>
+          <p><strong>Category:</strong> {{ categoryCodes[selectedJob.categoryCode] }}</p>
+          <p><strong>Skill Tags:</strong>
+            <span v-for="(skillId, index) in selectedJob.skillTag" :key="index">
+              {{ skillTags[skillId] || 'Unknown Skill' }}<span v-if="index < selectedJob.skillTag.length - 1">, </span>
+            </span>
+          </p>
+          <p><strong>Experience:</strong> {{ selectedJob.annualFrom }} - {{ selectedJob.annualTo }} years</p>
+          <!-- Company-related news placeholder -->
+          <div class="company-news">
+            <h4>Related News</h4>
+            <!-- Add logic to fetch and display news related to the company -->
+            <ul>
+              <li v-for="(news, index) in relatedNews" :key="index">
+                <a :href="news.url" target="_blank">{{ news.title }}</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button @click="goToJob(selectedJob.id)">채용 정보로 이동</button>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
@@ -82,14 +117,14 @@ export default {
         {
           id: 228347,
           companyId: 48734,
-          companyName: "와이피아이디어스컨설팅",
+          companyName: "YP Ideas Consulting",
           companyImg:
             "https://static.wanted.co.kr/images/company/48734/nmrx6ne3hrzyhz9l__400_400.jpg",
           companyAvgRate: "0.0",
           companyLvl: "very_low",
-          location: "서울",
+          location: "Seoul",
           district: null,
-          position: "개발자 CTO 혹은 기술 총괄 팀장 (근무지: 말레이시아)",
+          position: "CTO or Technical Lead (Location: Malaysia)",
           categoryCode: 872,
           attractionTags: [10433, 10426, 10468, 10437],
           skillTag: [1554, 3078, 1698],
@@ -101,14 +136,14 @@ export default {
         {
           id: 223111,
           companyId: 5072,
-          companyName: "크로커스",
+          companyName: "Crocus",
           companyImg:
             "https://static.wanted.co.kr/images/company/5072/tdubbanprxbumqth__400_400.png",
           companyAvgRate: "0.0",
           companyLvl: "very_low",
-          location: "서울",
-          district: "강남구",
-          position: "프론트엔드 개발 엔지니어 (React, Flutter)",
+          location: "Seoul",
+          district: "Gangnam-gu",
+          position: "Frontend Developer (React, Flutter)",
           categoryCode: 873,
           attractionTags: [10402, 10468, 10408, 10440, 10413, 10426],
           skillTag: [1469, 1539, 1541],
@@ -120,14 +155,14 @@ export default {
         {
           id: 174977,
           companyId: 521,
-          companyName: "크래프톤(Krafton)",
+          companyName: "Krafton",
           companyImg:
             "https://static.wanted.co.kr/images/company/521/27csffd2ls7lkpeo__400_400.jpg",
           companyAvgRate: "0.0",
           companyLvl: "very_low",
-          location: "서울",
-          district: "강남구",
-          position: "[Infra Div.] Publishing DevOps (3년 이상)",
+          location: "Seoul",
+          district: "Gangnam-gu",
+          position: "[Infra Div.] Publishing DevOps (3+ years)",
           categoryCode: 674,
           attractionTags: [
             10433, 10468, 10437, 10405, 10409, 10443, 10447, 10417, 10420,
@@ -139,10 +174,12 @@ export default {
           newbie: false,
           isScrapped: false,
         },
-        
+        // Add more jobs here as needed
       ],
       currentPage: 1,
       itemsPerPage: 15,
+      selectedJob: null, // 모달에 표시할 선택된 job
+      relatedNews: [],   // 관련 뉴스 목록
     };
   },
   computed: {
@@ -164,6 +201,27 @@ export default {
           `Job ${jobId} has been ${job.isScrapped ? "scrapped" : "unscrapped"}!`
         );
       }
+    },
+    openModal(job) {
+      this.selectedJob = job;
+      this.fetchRelatedNews(job.companyId); // 회사와 관련된 뉴스를 가져오는 함수
+    },
+    closeModal() {
+      this.selectedJob = null;
+      this.relatedNews = []; // 모달 닫을 때 뉴스도 초기화
+    },
+    goToJob(jobId) {
+      // 채용 정보로 이동하는 로직 (예: 외부 링크로 이동)
+      const url = `/jobs/${jobId}`;
+      window.open(url, "_blank");
+    },
+    fetchRelatedNews(companyId) {
+      // 실제 API 호출을 통한 뉴스 데이터 가져오기 로직 추가 필요
+      this.relatedNews = [
+        // 여기에 실제 데이터가 추가되어야 함
+        { title: "News 1", url: "https://news.example.com/1" },
+        { title: "News 2", url: "https://news.example.com/2" },
+      ];
     },
   },
 };
@@ -222,5 +280,76 @@ export default {
 
 .pagination button:hover {
   background-color: #0056b3;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* 충분히 높은 z-index 값을 설정 */
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 600px;
+  position: relative;
+  z-index: 1001; /* 오버레이보다 위에 오도록 설정 */
+}
+
+.modal-header img {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 10px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.5em;
+}
+
+.modal-body {
+  margin: 20px 0;
+}
+
+.modal-footer {
+  text-align: right;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  cursor: pointer;
+  z-index: 1002; /* 모달 컨텐츠 위에 오도록 설정 */
+}
+
+.company-news ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.company-news ul li {
+  margin-bottom: 5px;
+}
+
+.company-news ul li a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.company-news ul li a:hover {
+  text-decoration: underline;
 }
 </style>
