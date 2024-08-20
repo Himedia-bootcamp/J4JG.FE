@@ -117,7 +117,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button @click="goToJob(selectedJob.id)">채용 정보로 이동</button>
+          <button class="btn-go-to-job" @click="goToJob(selectedJob.id)">채용 정보로 이동</button>
         </div>
       </div>
     </div>
@@ -128,6 +128,7 @@
 import axios from 'axios';
 import { categoryCodes } from "@/data/categoryCodes.js";
 import { skillTags } from "@/data/skillTags.js";
+import { attractionTags } from "@/data/attractionTags.js"; // 여기에서 attractionTags를 import
 
 export default {
   name: "Services",
@@ -135,6 +136,7 @@ export default {
     return {
       categoryCodes,
       skillTags,
+      attractionTags, // attractionTags 데이터를 data에 추가
       jobs: [],
       currentPage: 0, // 페이지는 0부터 시작
       itemsPerPage: 15,
@@ -161,7 +163,7 @@ export default {
     async fetchJobs() {
       try {
         console.log("Fetching jobs with keyword:", this.keyword, "at page:", this.currentPage);
-        const response = await axios.get(`http://localhost:8000/backend/jobInfo/search?keyword=${this.keyword}&page=${this.currentPage}`);
+        const response = await axios.get(`http://localhost:5001/jobInfo/search?keyword=${this.keyword}&page=${this.currentPage}`);
         const fetchedJobs = response.data;
 
         if (fetchedJobs.length < this.itemsPerPage) {
@@ -206,7 +208,7 @@ export default {
     },
     goToJob(jobId) {
       // 채용 정보로 이동하는 로직 (예: 외부 링크로 이동)
-      const url = `/jobs/${jobId}`;
+      const url = `https://www.wanted.co.kr/wd/${jobId}`;
       window.open(url, "_blank");
     },
     fetchRelatedNews(companyId) {
@@ -230,6 +232,30 @@ export default {
         this.setPage(this.currentPageGroup.end + 1);
       }
     },
+    getTagNameById(tagId) {
+  let tagName = 'Unknown Tag';
+
+  // popular_tags에서 찾기
+  console.log('Checking popular_tags:', this.attractionTags.popular_tags);
+  const popularTag = this.attractionTags.popular_tags.find(tag => tag.id === tagId);
+  if (popularTag) {
+      tagName = popularTag.name;
+      console.log(`Found in popular_tags: ${tagName}`);
+  } else {
+      // data 내의 tag_types에서 찾기
+      console.log('Checking data:', this.attractionTags.data);
+      this.attractionTags.data.forEach(category => {
+          const foundTag = category.tag_types.find(tag => tag.id === tagId);
+          if (foundTag) {
+              tagName = foundTag.name;
+              console.log(`Found in tag_types: ${tagName}`);
+          }
+      });
+  }
+
+  console.log(`Final tagName for id ${tagId}: ${tagName}`);
+  return tagName;
+}
   },
   mounted() {
     this.fetchJobs(); // 컴포넌트가 마운트되면 채용 정보를 가져옴
@@ -383,5 +409,30 @@ export default {
 
 .company-news ul li a:hover {
   text-decoration: underline;
+}
+
+.btn-go-to-job {
+  background-color: #007BFF; /* 버튼 배경색 */
+  color: #fff; /* 텍스트 색상 */
+  padding: 10px 20px; /* 내부 여백 */
+  font-size: 1em; /* 글자 크기 */
+  border: none; /* 테두리 제거 */
+  border-radius: 5px; /* 모서리 둥글게 */
+  cursor: pointer; /* 마우스 포인터 변경 */
+  transition: background-color 0.3s ease; /* 배경색 변경 시 애니메이션 */
+}
+
+.btn-go-to-job:hover {
+  background-color: #0056b3; /* 마우스 오버 시 배경색 */
+}
+
+/* 모달의 기존 스타일 */
+.modal-footer {
+  text-align: right;
+  padding-top: 20px;
+}
+
+.modal-footer .btn-go-to-job {
+  margin-left: auto;
 }
 </style>

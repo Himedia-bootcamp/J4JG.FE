@@ -6,9 +6,10 @@
     </div>
 
     <div class="container text-center">
-      <button v-if="role === 'mentee'" class="btn-mentoring" @click="joinMentoring">멘토링 참여</button>
-      <button v-else-if="role === 'mentor'" class="btn-mentoring" @click="openPopup">멘토링 방 생성</button>
-      <button v-else-if="role === 'admin'" class="btn-mentoring" @click="openAdminPopup">멘토링 매칭</button>
+      <button v-if="role === 'ROLE_MENTEE'" class="btn-mentoring" @click="joinMentoring">멘토링 참여</button>
+      <button v-else-if="role === 'ROLE_MENTOR'" class="btn-mentoring" @click="openPopup">멘토링 방 생성</button>
+      <button v-else-if="role === 'ROLE_ADMIN'" class="btn-mentoring" @click="openAdminPopup">멘토링 매칭</button>
+      <button v-else-if="role === 'ROLE_UNKNOWN'" class="btn-mentoring" @click="notifyUnknownRole">인증하기</button>
     </div>
 
     <!-- Popup for creating mentoring room -->
@@ -78,9 +79,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import { useRouter } from 'vue-router';
 
-const role = 'admin'; // 'mentee', 'mentor', 'admin'
+const role = ref('ROLE_UNKNOWN'); // 초기 역할은 'ROLE_UNKNOWN'
 const showPopup = ref(false);
 const showAdminPopup = ref(false);
 const roomName = ref('');
@@ -89,6 +92,7 @@ const mentorRooms = ref([{ name: "Room A" }, { name: "Room B" }, { name: "Room C
 const mentees = ref([{ name: "Mentee 1" }, { name: "Mentee 2" }, { name: "Mentee 3" }]);
 const selectedRoom = ref(null);
 const selectedMentees = ref([]);
+const router = useRouter();
 
 function openPopup() {
   showPopup.value = true;
@@ -111,7 +115,6 @@ function closeAdminPopup() {
 }
 
 function onRoomChange() {
-  // Reset mentees selection when the room changes
   selectedMentees.value = [];
 }
 
@@ -134,9 +137,45 @@ function joinMentoring() {
   alert("멘토링에 참여하셨습니다!");
 }
 
-function manageMentoring() {
-  alert("멘토링 매칭 관리 페이지로 이동");
+function notifyUnknownRole() {
+  alert('휴대전화 인증을 통해 정식회원이 되어 멘토링 서비스를 이용해보세요');
 }
+
+// 사용자 정보 가져오는 함수
+async function fetchUserInfo() {
+  try {
+    const accessToken = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('accessToken='))
+      ?.split('=')[1];
+
+    if (!accessToken) {
+      console.error('accessToken이 없습니다. 로그인해주세요.');
+      router.push('/login');
+      return;
+    }
+
+    const response = await axios.get('http://localhost:8000/userinfo', {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
+      withCredentials: true,
+    });
+
+    const data = response.data;
+
+    // 유저 역할을 설정
+    role.value = data.role || 'ROLE_UNKNOWN';
+
+  } catch (error) {
+    console.error('사용자 정보를 가져오는 중 오류 발생:', error);
+    router.push('/login');
+  }
+}
+
+onMounted(() => {
+  fetchUserInfo();
+});
 </script>
 
 <style scoped>
