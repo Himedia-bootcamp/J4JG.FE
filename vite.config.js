@@ -17,10 +17,6 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 5173,
       proxy: {
-        '/favicon.ico': {
-        target: 'http://localhost:5173',  // 프론트엔드 서버 주소
-        changeOrigin: true,
-      },
         '/oauth2': {
           target: 'http://localhost:8000',  // 백엔드 서버 주소
           changeOrigin: true,

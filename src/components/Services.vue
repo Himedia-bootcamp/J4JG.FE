@@ -19,7 +19,7 @@
             <!-- 스크랩 버튼 -->
             <button
               class="scrap-button"
-              @click.stop="scrapJob(job.id)"
+              @click.stop="scrapJob(job)"
             >
               <i
                 :class="[
@@ -101,7 +101,7 @@
           </p>
           <p><strong>Attraction Tags:</strong>
             <span v-for="(tagId, index) in selectedJob.attractionTags" :key="index">
-              {{ skillTags[tagId] || 'Unknown Tag' }}<span v-if="index < selectedJob.attractionTags.length - 1">, </span>
+              {{ getTagNameById(tagId) }}<span v-if="index < selectedJob.attractionTags.length - 1">, </span>
             </span>
           </p>
           <p><strong>Experience:</strong> {{ selectedJob.annualFrom }} - {{ selectedJob.annualTo }} years</p>
@@ -163,7 +163,7 @@ export default {
     async fetchJobs() {
       try {
         console.log("Fetching jobs with keyword:", this.keyword, "at page:", this.currentPage);
-        const response = await axios.get(`http://localhost:5001/jobInfo/search?keyword=${this.keyword}&page=${this.currentPage}`);
+        const response = await axios.get(`http://localhost:5001/jobInfo/search`);
         const fetchedJobs = response.data;
 
         if (fetchedJobs.length < this.itemsPerPage) {
@@ -189,15 +189,99 @@ export default {
         }
       }
     },
-    scrapJob(jobId) {
-      const job = this.jobs.find((j) => j.id === jobId);
-      if (job) {
+    async scrapJob(job) {
+    const accessToken = this.getAccessToken();
+    const userId = this.getUserIdFromToken(accessToken);
+
+    try {
+        if (job.isScrapped) {
+            // 스크랩 취소 API 호출
+            await axios.put('http://localhost:5001/scrap', null, {
+                params: { scrapId: job.scrapId },
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            console.log(`User ID: ${userId} has UNSCRAPPED job ID: ${job.id}`);
+        } else {
+            // 스크랩 API 호출
+            await axios.post('http://localhost:5001/scrap', null, {
+                params: { jobInfoId: job.id },
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            console.log(`User ID: ${userId} has SCRAPPED job ID: ${job.id}`);
+        }
+        // 스크랩 상태 토글
         job.isScrapped = !job.isScrapped;
-        console.log(
-          `Job ${jobId} has been ${job.isScrapped ? "scrapped" : "unscrapped"}!`
-        );
-      }
+    } catch (error) {
+        console.error('Scrap action failed:', error);
+    }
+},
+
+    getAccessToken() {
+        const accessToken = document.cookie
+          .split('; ')
+          .find(row => row.startsWith('accessToken='))
+          ?.split('=')[1];
+        return accessToken || '';
     },
+
+    getUserIdFromToken(token) {
+    if (!token) return null;
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.sub; // 일반적으로 사용자 ID는 JWT의 "sub" 클레임에 포함됩니다.
+    } catch (error) {
+        console.error('Failed to extract user ID from token:', error);
+        return null;
+    }
+},
+
+    async fetchScrapList() {
+        try {
+            const response = await axios.get('http://localhost:5001/scrap', {
+                headers: {
+                    'Authorization': `Bearer ${this.getAccessToken()}`
+                },
+                params: {
+                    page: 0 // 원하는 페이지를 전달할 수 있습니다.
+                }
+            });
+            console.log('Scrap list:', response.data);
+        } catch (error) {
+            console.error('Failed to fetch scrap list:', error);
+        }
+    },
+
+    async initializeScrapStatus() {
+        try {
+            const response = await axios.get('http://localhost:5001/scrap', {
+                headers: {
+                    'Authorization': `Bearer ${this.getAccessToken()}`
+                },
+                params: {
+                    page: 0 // 기본 페이지를 사용
+                }
+            });
+            const scrapList = response.data.content;
+            this.jobs.forEach(job => {
+                const scrapItem = scrapList.find(scrap => scrap.jobInfoId === job.id);
+                if (scrapItem) {
+                    job.isScrapped = true;
+                    job.scrapId = scrapItem.scrapId; // 취소할 때 사용
+                } else {
+                    job.isScrapped = false;
+                }
+            });
+        } catch (error) {
+            console.error('Failed to initialize scrap status:', error);
+        }
+    },
+
     openModal(job) {
       this.selectedJob = job;
       this.fetchRelatedNews(job.companyId); // 회사와 관련된 뉴스를 가져오는 함수
@@ -233,32 +317,33 @@ export default {
       }
     },
     getTagNameById(tagId) {
-  let tagName = 'Unknown Tag';
-
-  // popular_tags에서 찾기
-  console.log('Checking popular_tags:', this.attractionTags.popular_tags);
-  const popularTag = this.attractionTags.popular_tags.find(tag => tag.id === tagId);
-  if (popularTag) {
-      tagName = popularTag.name;
-      console.log(`Found in popular_tags: ${tagName}`);
-  } else {
-      // data 내의 tag_types에서 찾기
-      console.log('Checking data:', this.attractionTags.data);
-      this.attractionTags.data.forEach(category => {
-          const foundTag = category.tag_types.find(tag => tag.id === tagId);
-          if (foundTag) {
-              tagName = foundTag.name;
-              console.log(`Found in tag_types: ${tagName}`);
-          }
-      });
-  }
-
-  console.log(`Final tagName for id ${tagId}: ${tagName}`);
-  return tagName;
-}
+        let tagName = 'Unknown Tag';
+    
+        // popular_tags에서 찾기
+        console.log('Checking popular_tags:', this.attractionTags.popular_tags);
+        const popularTag = this.attractionTags.popular_tags.find(tag => tag.id === tagId);
+        if (popularTag) {
+            tagName = popularTag.name;
+            console.log(`Found in popular_tags: ${tagName}`);
+        } else {
+            // data 내의 tag_types에서 찾기
+            console.log('Checking data:', this.attractionTags.data);
+            this.attractionTags.data.forEach(category => {
+                const foundTag = category.tag_types.find(tag => tag.id === tagId);
+                if (foundTag) {
+                    tagName = foundTag.name;
+                    console.log(`Found in tag_types: ${tagName}`);
+                }
+            });
+        }
+    
+        console.log(`Final tagName for id ${tagId}: ${tagName}`);
+        return tagName;
+    }
   },
   mounted() {
     this.fetchJobs(); // 컴포넌트가 마운트되면 채용 정보를 가져옴
+    this.initializeScrapStatus(); // 스크랩 상태 초기화
   },
 };
 </script>

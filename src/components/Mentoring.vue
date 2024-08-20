@@ -6,7 +6,7 @@
     </div>
 
     <div class="container text-center">
-      <button v-if="role === 'ROLE_MENTEE'" class="btn-mentoring" @click="joinMentoring">멘토링 참여</button>
+      <button v-if="role === 'ROLE_MENTEE'" class="btn-mentoring" @click="applyForMentoring">멘토링 참여</button>
       <button v-else-if="role === 'ROLE_MENTOR'" class="btn-mentoring" @click="openPopup">멘토링 방 생성</button>
       <button v-else-if="role === 'ROLE_ADMIN'" class="btn-mentoring" @click="openAdminPopup">멘토링 매칭</button>
       <button v-else-if="role === 'ROLE_UNKNOWN'" class="btn-mentoring" @click="notifyUnknownRole">인증하기</button>
@@ -105,6 +105,7 @@ function closePopup() {
 }
 
 function openAdminPopup() {
+  fetchMenteeApplications(); // 관리자가 팝업을 열 때 멘티 신청 목록을 불러옴
   showAdminPopup.value = true;
 }
 
@@ -133,21 +134,52 @@ function matchMentees() {
   closeAdminPopup();
 }
 
-function joinMentoring() {
-  alert("멘토링에 참여하셨습니다!");
-}
-
 function notifyUnknownRole() {
   alert('휴대전화 인증을 통해 정식회원이 되어 멘토링 서비스를 이용해보세요');
+}
+
+// 멘티가 멘토링 신청
+async function applyForMentoring() {
+  try {
+    const response = await axios.post('http://localhost:5001/application', null, {
+      headers: {
+        'Authorization': `Bearer ${getAccessToken()}`,
+      },
+    });
+    alert(response.data); // 서버에서 반환된 신청 결과 메시지를 표시
+  } catch (error) {
+    console.error('멘토링 신청 중 오류 발생:', error);
+    alert('멘토링 신청에 실패했습니다.');
+  }
+}
+
+// 관리자가 멘티 신청 목록 조회
+async function fetchMenteeApplications() {
+  try {
+    const response = await axios.get('http://localhost:8000/backend/application', {
+      headers: {
+        'Authorization': `Bearer ${getAccessToken()}`,
+      },
+      params: {
+        page: 0, // 기본 페이지를 사용
+      },
+    });
+
+    // 응답 데이터를 기반으로 mentees 목록 업데이트
+    const applications = response.data.content;
+    mentees.value = applications.map(app => ({
+      name: app.userName,
+      applicationId: app.applicationId,
+    }));
+  } catch (error) {
+    console.error('멘티 신청 목록 조회 중 오류 발생:', error);
+  }
 }
 
 // 사용자 정보 가져오는 함수
 async function fetchUserInfo() {
   try {
-    const accessToken = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('accessToken='))
-      ?.split('=')[1];
+    const accessToken = getAccessToken();
 
     if (!accessToken) {
       console.error('accessToken이 없습니다. 로그인해주세요.');
@@ -163,14 +195,20 @@ async function fetchUserInfo() {
     });
 
     const data = response.data;
-
-    // 유저 역할을 설정
     role.value = data.role || 'ROLE_UNKNOWN';
 
   } catch (error) {
     console.error('사용자 정보를 가져오는 중 오류 발생:', error);
     router.push('/login');
   }
+}
+
+// 액세스 토큰을 가져오는 함수
+function getAccessToken() {
+  return document.cookie
+    .split('; ')
+    .find(row => row.startsWith('accessToken='))
+    ?.split('=')[1] || '';
 }
 
 onMounted(() => {
