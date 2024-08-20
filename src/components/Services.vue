@@ -196,7 +196,7 @@ export default {
     try {
         if (job.isScrapped) {
             // 스크랩 취소 API 호출
-            await axios.put('http://localhost:5001/scrap', null, {
+            await axios.put('http://localhost:8000/backend/scrap', null, {
                 params: { scrapId: job.scrapId },
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
@@ -206,7 +206,7 @@ export default {
             console.log(`User ID: ${userId} has UNSCRAPPED job ID: ${job.id}`);
         } else {
             // 스크랩 API 호출
-            await axios.post('http://localhost:5001/scrap', null, {
+            await axios.post('http://localhost:8000/backend/scrap', null, {
                 params: { jobInfoId: job.id },
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
