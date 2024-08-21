@@ -1,6 +1,6 @@
 import { createApp } from 'vue';
 import App from './App.vue';
-import router from './router'; 
+import router from './router';
 import axios from 'axios';
 import VueAxios from 'vue-axios';
 import '@fortawesome/fontawesome-free/css/all.css';
@@ -13,7 +13,7 @@ const app = createApp(App);
 
 // Axios 인스턴스 생성
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8000',
+  baseURL: 'http://api.gateway.j4jg.shop',
   withCredentials: true, // 자격 증명(쿠키 등) 포함
 });
 
@@ -21,7 +21,7 @@ const axiosInstance = axios.create({
 app.use(VueAxios, axiosInstance);
 
 // 라우터 추가
-app.use(router); 
+app.use(router);
 
 // AOS 초기화
 AOS.init({
