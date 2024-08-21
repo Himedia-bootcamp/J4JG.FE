@@ -48,9 +48,9 @@ async function fetchUserInfo() {
     console.log('사용 중인 accessToken:', accessToken); // 토큰 로그 확인
 
 
-    
+
     // Authorization 헤더에 토큰을 추가하여 요청을 보냅니다.
-    const response = await axios.get('http://localhost:8000/userinfo', {
+    const response = await axios.get('http://api.gateway.j4jg.shop/userinfo', {
       headers: {
         'Authorization': `Bearer ${accessToken}`,
       },
@@ -69,7 +69,7 @@ async function fetchUserInfo() {
       // 인증 오류가 발생한 경우 (예: 토큰 만료 등)
       console.error('로그인이 필요합니다.');
     } else {
-      
+
       console.error('사용자 정보를 가져오는 중 오류 발생:', error);
     }
     // 인증 오류 처리: 로그인 페이지로 리디렉션 또는 경고 메시지 표시
@@ -79,7 +79,7 @@ async function fetchUserInfo() {
 
 // 로그인 처리 함수들
 const loginWithKakao = () => {
-  window.location.href = 'http://localhost:8000/oauth2/authorization/kakao';
+  window.location.href = 'http://api.gateway.j4jg.shop/oauth2/authorization/kakao';
 };
 
 const loginWithNaver = () => {
@@ -87,7 +87,7 @@ const loginWithNaver = () => {
 };
 
 const loginWithGoogle = () => {
-  window.location.href = 'http://localhost:8000/oauth2/authorization/google';
+  window.location.href = 'http://api.gateway.j4jg.shop/oauth2/authorization/google';
 };
 
 // onMounted는 컴포넌트가 마운트될 때 사용자 정보를 가져옵니다.
